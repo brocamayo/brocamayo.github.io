@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Broc Mayo — Program Manager · Tesla</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #e31937;
+      --dark: #111;
+      --gray: #555;
+      --muted: #888;
+      --light: #f5f6f8;
+      --card-bg: #fff;
+      --border: #e4e6ea;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--dark);
+      background: var(--light);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 58px;
+    }
+    nav .brand { font-weight: 800; font-size: 1.1rem; letter-spacing: -.02em; }
+    nav .brand span { color: var(--red); }
+    nav ul { list-style: none; display: flex; gap: 1.75rem; }
+    nav ul a {
+      text-decoration: none; color: var(--gray);
+      font-size: .9rem; font-weight: 500; transition: color .15s;
+    }
+    nav ul a:hover { color: var(--red); }
+    @media (max-width: 560px){ nav ul { gap: 1rem; } nav .brand { display:none; } }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 55%, #2a0a0e 100%);
+      color: #fff; padding: 5.5rem 2rem 4.5rem; text-align: center;
+    }
+    .hero .eyebrow {
+      font-size: .8rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--red); font-weight: 700; margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800;
+      letter-spacing: -.03em; line-height: 1.05; margin-bottom: 1rem;
+    }
+    .hero h1 span { color: var(--red); }
+    .hero .subtitle {
+      font-size: 1.15rem; color: #cfcfcf; max-width: 620px; margin: 0 auto 1.5rem;
+    }
+    .hero .tagline {
+      font-size: .9rem; color: var(--muted); margin-bottom: 2.25rem; letter-spacing: .01em;
+    }
+    .hero .cta-group { display: flex; gap: .85rem; justify-content: center; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.5rem; border-radius: 7px; font-weight: 600;
+      font-size: .9rem; text-decoration: none; transition: opacity .15s, transform .1s; cursor: pointer;
+    }
+    .btn:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-outline { border: 1.5px solid #4a4a4a; color: #ddd; }
+    .btn-dark { background: #222; color: #fff; border: 1px solid #333; }
+
+    /* SECTION */
+    section { max-width: 1080px; margin: 0 auto; padding: 4.5rem 2rem; }
+    .section-label {
+      font-size: .75rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--red); margin-bottom: .55rem;
+    }
+    .section-title { font-size: 1.9rem; font-weight: 800; margin-bottom: .55rem; letter-spacing: -.02em; }
+    .section-desc { color: var(--gray); max-width: 640px; margin-bottom: 2.5rem; font-size: .98rem; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* IMPACT BAR */
+    .impact-bar {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.75rem 1rem; display: flex; flex-wrap: wrap;
+    }
+    .impact-item { flex: 1; min-width: 150px; text-align: center; padding: .75rem 1rem; border-right: 1px solid var(--border); }
+    .impact-item:last-child { border-right: none; }
+    .impact-item .number { font-size: 2.1rem; font-weight: 800; color: var(--red); letter-spacing: -.03em; }
+    .impact-item .label { font-size: .8rem; color: var(--gray); margin-top: .3rem; line-height: 1.4; }
+    @media (max-width: 620px){ .impact-item { flex-basis: 45%; border-right: none; } }
+
+    /* PROJECT CARDS */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.5rem; }
+    .card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; transition: box-shadow .2s, transform .15s; display: flex; flex-direction: column;
+    }
+    .card:hover { box-shadow: 0 10px 32px rgba(0,0,0,.09); transform: translateY(-3px); }
+
+    /* Auto-swapping visual: drop a real screenshot into outputs/images/<file> and it replaces the SVG */
+    .shot { position: relative; width: 100%; height: 190px; overflow: hidden; }
+    .shot img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: top center; z-index: 2;
+    }
+    .shot .shot-fallback { position: absolute; inset: 0; z-index: 1; }
+    .shot .shot-fallback svg { width: 100%; height: 100%; display: block; }
+
+    .card-body { padding: 1.25rem 1.5rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
+    .card-tag {
+      align-self: flex-start; font-size: .68rem; font-weight: 700; letter-spacing: .07em;
+      text-transform: uppercase; color: var(--red); background: #ffeef0;
+      border-radius: 5px; padding: .22rem .6rem; margin-bottom: .7rem;
+    }
+    .card h3 { font-size: 1.08rem; font-weight: 700; margin-bottom: .45rem; letter-spacing: -.01em; }
+    .card p { font-size: .88rem; color: var(--gray); line-height: 1.55; }
+    .card .stat { margin-top: .9rem; font-size: 1.35rem; font-weight: 800; color: var(--dark); }
+    .card .stat-label { font-size: .76rem; color: var(--muted); }
+    .card-link {
+      margin-top: 1rem; font-size: .82rem; font-weight: 600; color: var(--dark);
+      text-decoration: none; display: inline-flex; align-items: center; gap: .35rem;
+    }
+    .card-link:hover { color: var(--red); }
+
+    /* GITHUB REPO CARDS */
+    .repos { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .repo {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+      display: flex; flex-direction: column; transition: box-shadow .2s, transform .15s; text-decoration: none; color: inherit;
+    }
+    .repo:hover { box-shadow: 0 10px 32px rgba(0,0,0,.09); transform: translateY(-3px); }
+    .repo .thumb { height: 130px; width: 100%; }
+    .repo .thumb svg { width: 100%; height: 100%; display: block; }
+    .repo-body { padding: 1.1rem 1.35rem 1.35rem; display: flex; flex-direction: column; flex: 1; }
+    .repo-head { display: flex; align-items: center; gap: .5rem; margin-bottom: .4rem; }
+    .repo-head svg { color: var(--muted); flex-shrink: 0; }
+    .repo-name { font-weight: 700; font-size: .98rem; letter-spacing: -.01em; }
+    .repo-desc { font-size: .83rem; color: var(--gray); line-height: 1.5; flex: 1; }
+    .repo-meta { display: flex; align-items: center; gap: .4rem; margin-top: .9rem; font-size: .76rem; color: var(--muted); }
+    .lang-dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+
+    /* ABOUT */
+    .about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; align-items: start; }
+    .about-grid p { color: var(--gray); font-size: .98rem; margin-bottom: 1rem; }
+    .interest-list { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+    .interest-list li {
+      background: var(--light); border: 1px solid var(--border); border-radius: 20px;
+      padding: .32rem .85rem; font-size: .82rem; color: var(--gray); font-weight: 500;
+    }
+    @media (max-width: 640px){ .about-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+    /* CONTACT */
+    .contact-section { background: #0d0d0d; color: #fff; text-align: center; }
+    .contact-section .section-title { color: #fff; }
+    .contact-section .section-desc { color: var(--muted); }
+    .contact-links { display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
+    .contact-links a {
+      display: flex; align-items: center; gap: .5rem; color: #ccc;
+      text-decoration: none; font-size: .92rem; font-weight: 500; transition: color .15s;
+    }
+    .contact-links a:hover { color: var(--red); }
+
+    footer { background: #070707; color: #666; text-align: center; padding: 1.5rem 2rem; font-size: .8rem; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="brand">Broc <span>Mayo</span></div>
+    <ul>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#code">Code</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="eyebrow">Program Manager · Tesla</p>
+    <h1>Broc <span>Mayo</span></h1>
+    <p class="subtitle">I build data systems and automations that cut manual work and save real money — backed by code, dashboards, and business cases.</p>
+    <p class="tagline">Power BI · Python · Power Automate · AI &amp; Computer Vision · Process Design</p>
+    <div class="cta-group">
+      <a href="https://github.com/brocamayo" class="btn btn-primary" target="_blank">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GitHub
+      </a>
+      <a href="https://www.linkedin.com/in/brocmayo" class="btn btn-dark" target="_blank">LinkedIn</a>
+      <a href="#work" class="btn btn-outline">View Work ↓</a>
+    </div>
+  </div>
+
+  <!-- IMPACT -->
+  <section id="impact" style="padding-bottom: 0;">
+    <p class="section-label">By the numbers</p>
+    <h2 class="section-title">Documented Impact</h2>
+    <p class="section-desc">Outcomes from projects delivered at Tesla since February 2024.</p>
+    <div class="impact-bar">
+      <div class="impact-item"><div class="number">$1M+</div><div class="label">Annual savings from spend dashboards</div></div>
+      <div class="impact-item"><div class="number">$650K</div><div class="label">Projected savings — forklift safety case</div></div>
+      <div class="impact-item"><div class="number">$260K</div><div class="label">Projected savings — lithium battery fleet</div></div>
+      <div class="impact-item"><div class="number">+20%</div><div class="label">Project delivery via Jira dashboards</div></div>
+    </div>
+  </section>
+
+  <hr class="divider" style="margin-top:4.5rem;" />
+
+  <!-- WORK -->
+  <section id="work">
+    <p class="section-label">Tesla Portfolio</p>
+    <h2 class="section-title">Selected Work</h2>
+    <p class="section-desc">Dashboards, cost-saving business cases, and automation. To use a real screenshot, drop a PNG with the filename noted in each card into <code>outputs/images/</code> — it replaces the designed visual automatically.</p>
+
+    <div class="cards">
+
+      <!-- 1. Spend Dashboard -->
+      <div class="card">
+        <div class="shot">
+          <!-- drop file: images/spend-dashboard.png -->
+          <img src="images/spend-dashboard.png" alt="Power BI Spend Dashboard" onerror="this.style.display='none'">
+          <div class="shot-fallback">
+            <svg viewBox="0 0 320 190" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <rect width="320" height="190" fill="#1b1f27"/>
+              <text x="16" y="26" fill="#e31937" font-family="Arial" font-weight="bold" font-size="13" letter-spacing="3">TESLA</text>
+              <rect x="16" y="40" width="170" height="60" rx="3" fill="#2a3140"/>
+              <rect x="24" y="50" width="120" height="6" rx="3" fill="#4d83c4"/>
+              <rect x="24" y="62" width="150" height="6" rx="3" fill="#4d83c4"/>
+              <rect x="24" y="74" width="90" height="6" rx="3" fill="#3a6aa0"/>
+              <rect x="24" y="86" width="60" height="6" rx="3" fill="#3a6aa0"/>
+              <rect x="196" y="40" width="108" height="60" rx="3" fill="#26405e"/>
+              <rect x="204" y="50" width="92" height="5" fill="#5f9fd6"/>
+              <rect x="204" y="60" width="92" height="5" fill="#3d6f9e"/>
+              <rect x="204" y="70" width="92" height="5" fill="#5f9fd6"/>
+              <rect x="204" y="80" width="92" height="5" fill="#3d6f9e"/>
+              <!-- waterfall line -->
+              <polyline points="20,170 50,150 80,158 110,150 140,135 170,120 200,128 230,118 260,124 300,128" fill="none" stroke="#6fb1e8" stroke-width="2.5"/>
+              <polygon points="20,170 50,150 80,158 110,150 140,135 170,120 200,128 230,118 260,124 300,128 300,180 20,180" fill="#6fb1e8" opacity="0.18"/>
+              <text x="16" y="120" fill="#9fb3c8" font-family="Arial" font-size="9">Total Spend by Vendor</text>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Power BI · Cost Savings</span>
+          <h3>Department Spend Dashboard</h3>
+          <p>Self-updating Power BI dashboard tracking spend by vendor, MoM/QoQ change, and lead times — turning raw procurement data into decisions.</p>
+          <div class="stat">$500K–$1M</div>
+          <div class="stat-label">contributed to annual savings</div>
+        </div>
+      </div>
+
+      <!-- 2. Jira / PCM Dashboard -->
+      <div class="card">
+        <div class="shot">
+          <!-- drop file: images/jira-dashboard.png -->
+          <img src="images/jira-dashboard.png" alt="Jira PCM Project Dashboard" onerror="this.style.display='none'">
+          <div class="shot-fallback">
+            <svg viewBox="0 0 320 190" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <rect width="320" height="190" fill="#f4f5f7"/>
+              <rect x="0" y="0" width="320" height="20" fill="#0d0d0d"/>
+              <text x="12" y="14" fill="#fff" font-family="Arial" font-size="10" font-weight="bold">MEME Fab — PCM Overview</text>
+              <!-- priority bar -->
+              <rect x="14" y="32" width="130" height="14" rx="2" fill="#86b817"/>
+              <rect x="144" y="32" width="66" height="14" fill="#2484c6"/>
+              <rect x="210" y="32" width="50" height="14" fill="#d9534f"/>
+              <rect x="260" y="32" width="34" height="14" fill="#f0ad4e"/>
+              <!-- health tiles -->
+              <g font-family="Arial" font-weight="bold" font-size="15" text-anchor="middle">
+                <text x="45" y="78" fill="#d9534f">10</text>
+                <text x="115" y="78" fill="#f0ad4e">20</text>
+                <text x="185" y="78" fill="#2e8b57">15</text>
+                <text x="262" y="78" fill="#e8950c">48</text>
+              </g>
+              <g font-family="Arial" font-size="7" fill="#777" text-anchor="middle">
+                <text x="45" y="90">OVERDUE</text><text x="115" y="90">BLOCKED</text>
+                <text x="185" y="90">ON TRACK</text><text x="262" y="90">NO DUE DATE</text>
+              </g>
+              <!-- rows -->
+              <g fill="#fff"><rect x="14" y="104" width="292" height="76" rx="3" stroke="#e0e0e0"/></g>
+              <g font-family="Arial" font-size="7.5" fill="#444">
+                <rect x="14" y="104" width="292" height="15" fill="#0d6e6e"/><text x="20" y="114" fill="#fff">Key  Summary  Status  PH  Assignee</text>
+                <text x="20" y="132">PCM-2322  Reflector Replacement   ON TRACK</text>
+                <text x="20" y="146">PCM-2321  Impact Attenuator       ON TRACK</text>
+                <text x="20" y="160">PCM-2316  Supermanifold FA        OVERDUE</text>
+                <text x="20" y="174">PCM-2308  Flipper Hardware        NO DUE</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Jira · Reporting</span>
+          <h3>PCM Project Health Dashboard</h3>
+          <p>Live Jira dashboards for project health, workload balancing, and overdue tracking across the fab team — driving accountability and faster delivery.</p>
+          <div class="stat">+20%</div>
+          <div class="stat-label">increase in project delivery</div>
+        </div>
+      </div>
+
+      <!-- 3. Forklift ROI -->
+      <div class="card">
+        <div class="shot">
+          <!-- drop file: images/roi-pedestrian.png -->
+          <img src="images/roi-pedestrian.png" alt="Pedestrian Detection ROI Calculator" onerror="this.style.display='none'">
+          <div class="shot-fallback">
+            <svg viewBox="0 0 320 190" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <rect width="320" height="190" fill="#fff"/>
+              <rect x="0" y="0" width="6" height="190" fill="#e8950c"/>
+              <text x="20" y="44" fill="#111" font-family="Arial" font-weight="bold" font-size="20">ROI Calculator</text>
+              <line x1="20" y1="56" x2="300" y2="56" stroke="#e0e0e0"/>
+              <g font-family="Arial" font-size="9" fill="#444">
+                <circle cx="24" cy="72" r="2" fill="#444"/><text x="32" y="75">AI Camera — Pedestrian Detection</text>
+                <circle cx="24" cy="90" r="2" fill="#444"/><text x="32" y="93">Payback period: 4.7 months</text>
+                <circle cx="24" cy="108" r="2" fill="#444"/><text x="32" y="111">Aligned with Finance Nov '24</text>
+              </g>
+              <rect x="20" y="126" width="280" height="46" rx="4" fill="#1e3a26"/>
+              <text x="160" y="148" fill="#7fd99a" font-family="Arial" font-weight="bold" font-size="17" text-anchor="middle">$650K+ / year</text>
+              <text x="160" y="163" fill="#bfe9cc" font-family="Arial" font-size="8" text-anchor="middle">projected savings in safety incidents</text>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Safety · Business Case · CV</span>
+          <h3>Forklift Pedestrian Detection</h3>
+          <p>Built the ROI case for AI-camera pedestrian detection on forklifts — vendor sourcing, testing, and a finance-aligned model with a 4.7-month payback.</p>
+          <div class="stat">$650K</div>
+          <div class="stat-label">projected annual savings</div>
+        </div>
+      </div>
+
+      <!-- 4. Lithium Battery (SVG only) -->
+      <div class="card">
+        <div class="shot">
+          <!-- drop file: images/lithium-case.png -->
+          <img src="images/lithium-case.png" alt="Lithium Battery Business Case" onerror="this.style.display='none'">
+          <div class="shot-fallback">
+            <svg viewBox="0 0 320 190" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <rect width="320" height="190" fill="#0f1c14"/>
+              <text x="20" y="32" fill="#7fd99a" font-family="Arial" font-weight="bold" font-size="12">Lithium vs. Lead-Acid — TCO</text>
+              <!-- battery icon -->
+              <rect x="20" y="58" width="60" height="100" rx="6" fill="none" stroke="#7fd99a" stroke-width="2.5"/>
+              <rect x="40" y="50" width="20" height="10" rx="2" fill="#7fd99a"/>
+              <rect x="26" y="120" width="48" height="32" rx="2" fill="#3aa55f"/>
+              <rect x="26" y="96" width="48" height="20" rx="2" fill="#5ec27e"/>
+              <rect x="26" y="78" width="48" height="14" rx="2" fill="#7fd99a"/>
+              <!-- declining cost bars -->
+              <g>
+                <rect x="120" y="70" width="26" height="88" fill="#c0504d"/>
+                <rect x="156" y="95" width="26" height="63" fill="#d98b89"/>
+                <rect x="192" y="110" width="26" height="48" fill="#5ec27e"/>
+                <rect x="228" y="120" width="26" height="38" fill="#3aa55f"/>
+                <rect x="264" y="128" width="26" height="30" fill="#2e8b57"/>
+              </g>
+              <text x="120" y="172" fill="#9ab0a2" font-family="Arial" font-size="7">60-unit fleet · annualized</text>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Fleet · Cost Savings</span>
+          <h3>Lithium Battery Business Case</h3>
+          <p>Cost-benefit analysis justifying a fleet transition to lithium batteries across an initial 60-unit fleet, modeling total cost of ownership.</p>
+          <div class="stat">~$260K</div>
+          <div class="stat-label">projected annual savings</div>
+        </div>
+      </div>
+
+      <!-- 5. Python PDF extraction (links to repo) -->
+      <div class="card">
+        <div class="shot">
+          <!-- drop file: images/python-scraper.png -->
+          <img src="images/python-scraper.png" alt="Python PDF Quote Scraper" onerror="this.style.display='none'">
+          <div class="shot-fallback">
+            <svg viewBox="0 0 320 190" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <rect width="320" height="190" fill="#1e1e1e"/>
+              <rect x="0" y="0" width="320" height="20" fill="#2d2d2d"/>
+              <circle cx="14" cy="10" r="3.5" fill="#ff5f56"/><circle cx="28" cy="10" r="3.5" fill="#ffbd2e"/><circle cx="42" cy="10" r="3.5" fill="#27c93f"/>
+              <text x="60" y="14" fill="#888" font-family="monospace" font-size="8">quote_scraper.py</text>
+              <g font-family="monospace" font-size="9">
+                <text x="14" y="40" fill="#c586c0">import</text><text x="58" y="40" fill="#9cdcfe">pdfplumber</text>
+                <text x="14" y="56" fill="#c586c0">import</text><text x="58" y="56" fill="#9cdcfe">pandas</text><text x="100" y="56" fill="#c586c0"> as</text><text x="124" y="56" fill="#9cdcfe"> pd</text>
+                <text x="14" y="78" fill="#569cd6">def</text><text x="40" y="78" fill="#dcdcaa"> extract_price</text><text x="116" y="78" fill="#d4d4d4">(text):</text>
+                <text x="30" y="94" fill="#ce9178">"""Extract price"""</text>
+                <text x="30" y="110" fill="#9cdcfe">match</text><text x="64" y="110" fill="#d4d4d4"> = re.search(</text>
+                <text x="44" y="124" fill="#ce9178">r'(\d+(?:\.\d{2})?)'</text>
+                <text x="30" y="140" fill="#c586c0">return</text><text x="72" y="140" fill="#9cdcfe"> float</text><text x="104" y="140" fill="#d4d4d4">(match)</text>
+                <text x="14" y="162" fill="#6a9955"># → Part #, Desc, Qty, Unit Price</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Python · Automation</span>
+          <h3>PDF Quote Data Extraction</h3>
+          <p>Python tool (pdfplumber + pandas + regex) that scrapes part numbers, descriptions, quantities, and pricing from vendor quote PDFs straight into Excel — killing manual entry.</p>
+          <a class="card-link" href="https://github.com/brocamayo/PDF-Quote-Scraper" target="_blank">
+            View code on GitHub
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- 6. Power Automate flow -->
+      <div class="card">
+        <div class="shot">
+          <!-- drop file: images/power-automate.png -->
+          <img src="images/power-automate.png" alt="Power Automate Flow" onerror="this.style.display='none'">
+          <div class="shot-fallback">
+            <svg viewBox="0 0 320 190" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <rect width="320" height="190" fill="#faf9f8"/>
+              <g font-family="Arial" font-size="8" fill="#fff">
+                <rect x="120" y="14" width="80" height="22" rx="4" fill="#0078d4"/><text x="160" y="28" text-anchor="middle">New message</text>
+                <rect x="120" y="52" width="80" height="22" rx="4" fill="#8661c5"/><text x="160" y="66" text-anchor="middle">Set variables</text>
+                <rect x="120" y="90" width="80" height="22" rx="4" fill="#5c5c5c"/><text x="160" y="104" text-anchor="middle">For each</text>
+                <rect x="120" y="128" width="80" height="22" rx="4" fill="#5c5c5c"/><text x="160" y="142" text-anchor="middle">Condition</text>
+                <rect x="70" y="160" width="70" height="20" rx="4" fill="#107c10"/><text x="105" y="173" text-anchor="middle">Create item</text>
+                <rect x="180" y="160" width="70" height="20" rx="4" fill="#a4262c"/><text x="215" y="173" text-anchor="middle">0 Actions</text>
+              </g>
+              <g stroke="#b0b0b0" stroke-width="1.5">
+                <line x1="160" y1="36" x2="160" y2="52"/><line x1="160" y1="74" x2="160" y2="90"/>
+                <line x1="160" y1="112" x2="160" y2="128"/><line x1="160" y1="150" x2="105" y2="160"/><line x1="160" y1="150" x2="215" y2="160"/>
+              </g>
+              <g fill="#b0b0b0"><circle cx="160" cy="44" r="2.5"/><circle cx="160" cy="82" r="2.5"/><circle cx="160" cy="120" r="2.5"/></g>
+            </svg>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Power Automate · Automation</span>
+          <h3>Delivery Status Email Automation</h3>
+          <p>Power Automate flow triggered from Teams messages that parses shift, assignee, and line-item data and writes structured records to SharePoint — no manual follow-up.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- CODE / GITHUB -->
+  <section id="code">
+    <p class="section-label">Open Source</p>
+    <h2 class="section-title">Code &amp; Projects</h2>
+    <p class="section-desc">Public repositories — automation tools, AI assistants, and computer-vision projects. Built to solve real procurement, fabrication, and workflow problems.</p>
+
+    <div class="repos">
+
+      <!-- PDF-Quote-Scraper -->
+      <a class="repo" href="https://github.com/brocamayo/PDF-Quote-Scraper" target="_blank">
+        <div class="thumb">
+          <svg viewBox="0 0 300 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="130" fill="#1e1e1e"/>
+            <g font-family="monospace" font-size="9">
+              <text x="16" y="28" fill="#c586c0">import</text><text x="62" y="28" fill="#9cdcfe">pdfplumber, pandas</text>
+              <text x="16" y="46" fill="#569cd6">def</text><text x="40" y="46" fill="#dcdcaa"> parse_quote</text><text x="118" y="46" fill="#d4d4d4">(pdf):</text>
+              <text x="32" y="64" fill="#ce9178">r'(\d+(?:\.\d{2})?)'</text>
+              <text x="16" y="86" fill="#6a9955"># Part# · Desc · Qty · Price</text>
+            </g>
+            <rect x="0" y="104" width="300" height="26" fill="#252526"/>
+            <text x="16" y="121" fill="#4ec9b0" font-family="monospace" font-size="9">→ exported to Excel ✓</text>
+          </svg>
+        </div>
+        <div class="repo-body">
+          <div class="repo-head">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span class="repo-name">PDF-Quote-Scraper</span>
+          </div>
+          <p class="repo-desc">Extracts part numbers, descriptions, quantities, and unit prices from vendor quote PDFs into Excel.</p>
+          <div class="repo-meta"><span class="lang-dot" style="background:#3572A5;"></span>Python · pdfplumber · pandas</div>
+        </div>
+      </a>
+
+      <!-- po-justification-assistant -->
+      <a class="repo" href="https://github.com/brocamayo/po-justification-assistant" target="_blank">
+        <div class="thumb">
+          <svg viewBox="0 0 300 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="130" fill="#16203a"/>
+            <circle cx="50" cy="55" r="26" fill="none" stroke="#5b9bff" stroke-width="2"/>
+            <path d="M40 55 l7 7 14 -16" fill="none" stroke="#5b9bff" stroke-width="3" stroke-linecap="round"/>
+            <g font-family="Arial" font-size="9" fill="#cdd8f0">
+              <rect x="100" y="34" width="170" height="9" rx="4" fill="#2c3a5e"/>
+              <rect x="100" y="52" width="140" height="9" rx="4" fill="#2c3a5e"/>
+              <rect x="100" y="70" width="160" height="9" rx="4" fill="#2c3a5e"/>
+            </g>
+            <rect x="0" y="104" width="300" height="26" fill="#0f1830"/>
+            <text x="16" y="121" fill="#7fd0ff" font-family="Arial" font-size="9">AI-drafted PO justifications → Teams</text>
+          </svg>
+        </div>
+        <div class="repo-body">
+          <div class="repo-head">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span class="repo-name">po-justification-assistant</span>
+          </div>
+          <p class="repo-desc">Streamlit app that uses the Claude API (forced tool use) to generate structured PO justifications and post them to Microsoft Teams. Dockerized.</p>
+          <div class="repo-meta"><span class="lang-dot" style="background:#3572A5;"></span>Python · Streamlit · Claude API · Docker</div>
+        </div>
+      </a>
+
+      <!-- industrial-parts-image-scraper -->
+      <a class="repo" href="https://github.com/brocamayo/industrial-parts-image-scraper" target="_blank">
+        <div class="thumb">
+          <svg viewBox="0 0 300 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="130" fill="#202830"/>
+            <g>
+              <rect x="20" y="22" width="50" height="50" rx="4" fill="#37414d"/><rect x="80" y="22" width="50" height="50" rx="4" fill="#37414d"/>
+              <rect x="140" y="22" width="50" height="50" rx="4" fill="#37414d"/><rect x="200" y="22" width="50" height="50" rx="4" fill="#2a323b"/>
+              <circle cx="45" cy="42" r="8" fill="#6fb1e8"/><rect x="30" y="56" width="30" height="5" fill="#55606b"/>
+              <circle cx="105" cy="42" r="8" fill="#7fd99a"/><rect x="90" y="56" width="30" height="5" fill="#55606b"/>
+              <circle cx="165" cy="42" r="8" fill="#e8b04d"/><rect x="150" y="56" width="30" height="5" fill="#55606b"/>
+            </g>
+            <rect x="0" y="92" width="300" height="38" fill="#1a2027"/>
+            <text x="16" y="110" fill="#9fb3c8" font-family="monospace" font-size="9">selenium · downloading images...</text>
+            <rect x="16" y="116" width="200" height="5" rx="2" fill="#37414d"/><rect x="16" y="116" width="150" height="5" rx="2" fill="#6fb1e8"/>
+          </svg>
+        </div>
+        <div class="repo-body">
+          <div class="repo-head">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span class="repo-name">industrial-parts-image-scraper</span>
+          </div>
+          <p class="repo-desc">Selenium automation that scrapes and organizes industrial part images + metadata for procurement and inventory.</p>
+          <div class="repo-meta"><span class="lang-dot" style="background:#3572A5;"></span>Python · Selenium</div>
+        </div>
+      </a>
+
+      <!-- qr-code-scanner -->
+      <a class="repo" href="https://github.com/brocamayo/qr-code-scanner" target="_blank">
+        <div class="thumb">
+          <svg viewBox="0 0 300 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="130" fill="#101418"/>
+            <g fill="#e6e6e6">
+              <rect x="120" y="30" width="60" height="60"/>
+            </g>
+            <g fill="#101418">
+              <rect x="126" y="36" width="12" height="12"/><rect x="162" y="36" width="12" height="12"/><rect x="126" y="72" width="12" height="12"/>
+              <rect x="144" y="54" width="6" height="6"/><rect x="156" y="60" width="6" height="6"/><rect x="150" y="72" width="12" height="6"/>
+            </g>
+            <rect x="112" y="22" width="76" height="76" fill="none" stroke="#27c93f" stroke-width="2.5"/>
+            <line x1="112" y1="60" x2="188" y2="60" stroke="#27c93f" stroke-width="1.5" opacity="0.7"/>
+            <text x="150" y="116" fill="#27c93f" font-family="monospace" font-size="9" text-anchor="middle">DECODED ✓</text>
+          </svg>
+        </div>
+        <div class="repo-body">
+          <div class="repo-head">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span class="repo-name">qr-code-scanner</span>
+          </div>
+          <p class="repo-desc">Real-time webcam QR scanner with live detection and bounding boxes — computer vision in Python.</p>
+          <div class="repo-meta"><span class="lang-dot" style="background:#3572A5;"></span>Python · OpenCV · Pyzbar</div>
+        </div>
+      </a>
+
+      <!-- spare-parts-folder-gen -->
+      <a class="repo" href="https://github.com/brocamayo/spare-parts-folder-gen" target="_blank">
+        <div class="thumb">
+          <svg viewBox="0 0 300 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="130" fill="#fbf7ea"/>
+            <g fill="#e8b04d" stroke="#c8923a" stroke-width="1.5">
+              <path d="M30 30 h22 l6 7 h26 v34 h-54 z"/>
+              <path d="M70 50 h22 l6 7 h26 v34 h-54 z"/>
+              <path d="M110 70 h22 l6 7 h26 v30 h-54 z"/>
+            </g>
+            <g stroke="#c8923a" stroke-width="1.5" fill="none"><line x1="40" y1="71" x2="40" y2="57"/><line x1="40" y1="57" x2="70" y2="57"/><line x1="80" y1="91" x2="80" y2="77"/><line x1="80" y1="77" x2="110" y2="77"/></g>
+            <text x="170" y="55" fill="#8a6d2f" font-family="monospace" font-size="9">Mfr /</text>
+            <text x="182" y="72" fill="#8a6d2f" font-family="monospace" font-size="9">Supplier /</text>
+            <text x="194" y="89" fill="#8a6d2f" font-family="monospace" font-size="9">PartId</text>
+          </svg>
+        </div>
+        <div class="repo-body">
+          <div class="repo-head">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span class="repo-name">spare-parts-folder-gen</span>
+          </div>
+          <p class="repo-desc">Generates a 3-level photo folder structure for spare parts from an Excel parts list, with dry-run preview.</p>
+          <div class="repo-meta"><span class="lang-dot" style="background:#3572A5;"></span>Python · openpyxl</div>
+        </div>
+      </a>
+
+      <!-- job-application-bot -->
+      <a class="repo" href="https://github.com/brocamayo/job-application-bot" target="_blank">
+        <div class="thumb">
+          <svg viewBox="0 0 300 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="130" fill="#fff7ed"/>
+            <rect x="40" y="20" width="80" height="90" rx="4" fill="#fff" stroke="#e0a060" stroke-width="1.5"/>
+            <rect x="50" y="32" width="40" height="6" fill="#e0a060"/><rect x="50" y="46" width="60" height="4" fill="#d9c3a8"/>
+            <rect x="50" y="56" width="60" height="4" fill="#d9c3a8"/><rect x="50" y="66" width="50" height="4" fill="#d9c3a8"/>
+            <rect x="50" y="84" width="60" height="4" fill="#d9c3a8"/><rect x="50" y="94" width="40" height="4" fill="#d9c3a8"/>
+            <circle cx="200" cy="55" r="30" fill="none" stroke="#f0921e" stroke-width="6" stroke-dasharray="150 190" transform="rotate(-90 200 55)"/>
+            <text x="200" y="60" fill="#b3650f" font-family="Arial" font-weight="bold" font-size="14" text-anchor="middle">88%</text>
+            <text x="200" y="100" fill="#b3650f" font-family="Arial" font-size="9" text-anchor="middle">ATS match</text>
+          </svg>
+        </div>
+        <div class="repo-body">
+          <div class="repo-head">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span class="repo-name">job-application-bot</span>
+          </div>
+          <p class="repo-desc">Local tool that tailors resumes + cover letters per role, scores ATS keyword match, and outputs PDFs — no server.</p>
+          <div class="repo-meta"><span class="lang-dot" style="background:#f1e05a;"></span>JavaScript · Node.js</div>
+        </div>
+      </a>
+
+      <!-- claude-power-user-map -->
+      <a class="repo" href="https://brocamayo.github.io/claude-power-user-map" target="_blank">
+        <div class="thumb">
+          <svg viewBox="0 0 300 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="130" fill="#1a1320"/>
+            <circle cx="150" cy="65" r="20" fill="#d97757"/>
+            <g stroke="#6b4e7a" stroke-width="1.5">
+              <line x1="150" y1="65" x2="70" y2="35"/><line x1="150" y1="65" x2="240" y2="35"/>
+              <line x1="150" y1="65" x2="60" y2="100"/><line x1="150" y1="65" x2="245" y2="100"/><line x1="150" y1="65" x2="150" y2="20"/>
+            </g>
+            <g fill="#b48ec9"><circle cx="70" cy="35" r="8"/><circle cx="240" cy="35" r="8"/><circle cx="60" cy="100" r="8"/><circle cx="245" cy="100" r="8"/><circle cx="150" cy="20" r="7"/></g>
+            <text x="150" y="69" fill="#fff" font-family="Arial" font-size="8" text-anchor="middle">Claude</text>
+          </svg>
+        </div>
+        <div class="repo-body">
+          <div class="repo-head">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span class="repo-name">claude-power-user-map</span>
+          </div>
+          <p class="repo-desc">Interactive visual reference for Claude features, workflows, and power-user techniques. Live on GitHub Pages.</p>
+          <div class="repo-meta"><span class="lang-dot" style="background:#e34c26;"></span>HTML · Live site</div>
+        </div>
+      </a>
+
+      <!-- youtube-learn -->
+      <a class="repo" href="https://github.com/brocamayo/youtube-learn" target="_blank">
+        <div class="thumb">
+          <svg viewBox="0 0 300 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="300" height="130" fill="#fff4f4"/>
+            <rect x="40" y="35" width="90" height="60" rx="10" fill="#ff0000"/>
+            <polygon points="78,52 78,78 102,65" fill="#fff"/>
+            <text x="155" y="55" fill="#c0392b" font-family="Arial" font-weight="bold" font-size="11">→ Notes</text>
+            <g fill="#e8b3b3"><rect x="155" y="66" width="100" height="5" rx="2"/><rect x="155" y="78" width="85" height="5" rx="2"/><rect x="155" y="90" width="95" height="5" rx="2"/></g>
+          </svg>
+        </div>
+        <div class="repo-body">
+          <div class="repo-head">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            <span class="repo-name">youtube-learn</span>
+          </div>
+          <p class="repo-desc">Claude skill that turns any YouTube video into structured, educational deep-dive notes.</p>
+          <div class="repo-meta"><span class="lang-dot" style="background:#8957e5;"></span>Claude Skill</div>
+        </div>
+      </a>
+
+    </div>
+
+    <div style="margin-top:1.75rem; text-align:center;">
+      <a href="https://github.com/brocamayo" class="btn btn-dark" target="_blank">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        See all repos on GitHub
+      </a>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label">Background</p>
+    <h2 class="section-title">About Me</h2>
+    <div class="about-grid">
+      <div>
+        <p>I'm a Program Manager at Tesla (since Feb. 2024) who pairs structured program management with hands-on technical execution.</p>
+        <p>My work lives at the intersection of process design and code — whether that's a Power BI dashboard driving million-dollar procurement decisions, a Python tool that eliminates manual data entry, or an AI business case aligned with finance.</p>
+        <p>I care about shipping things that get used: tools, dashboards, and automations that quietly remove work and surface better decisions.</p>
+      </div>
+      <div>
+        <p style="font-weight:600; margin-bottom:.75rem;">Focus Areas</p>
+        <ul class="interest-list">
+          <li>Program Management</li>
+          <li>Data Visualization</li>
+          <li>Process Automation</li>
+          <li>Python</li>
+          <li>AI &amp; Computer Vision</li>
+          <li>Business Cases</li>
+          <li>Procurement</li>
+          <li>Continuous Improvement</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact-section" style="max-width:100%; padding: 4.5rem 2rem;">
+    <div style="max-width:600px; margin:0 auto;">
+      <p class="section-label" style="color:#e31937;">Get in touch</p>
+      <h2 class="section-title">Let's Connect</h2>
+      <p class="section-desc" style="margin:0 auto;">Open to conversations about interesting problems, program/product roles, and collaboration.</p>
+      <div class="contact-links">
+        <a href="https://www.linkedin.com/in/brocmayo" target="_blank">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/brocamayo" target="_blank">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 Broc Mayo · Program Manager · Built with HTML/CSS
+  </footer>
+
+</body>
+</html>
